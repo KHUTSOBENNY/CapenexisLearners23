@@ -20,11 +20,17 @@ namespace CapenexisLearners23.Controllers
         }
 
         // GET: Facilitators
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-              return _context.Facilitator != null ? 
-                          View(await _context.Facilitator.ToListAsync()) :
-                          Problem("Entity set 'CapenexisLearners23Context.Facilitator'  is null.");
+            var facilitators = from f in _context.Facilitator
+                           select f;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                facilitators = facilitators.Where(s => s.FacilitatorIdNumber!.Contains(searchString) || s.Surname!.Contains(searchString) || s.Course!.Contains(searchString) || s.FirstName!.Contains(searchString));
+            }
+
+            return View(await facilitators.ToListAsync());
         }
 
         // GET: Facilitators/Details/5
